@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - BookingPro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2><a href="index.html" style="text-decoration: none; color: inherit;">BookingPro</a></h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+                <li><a href="booking.html" class="nav-link">Buat Booking</a></li>
+                <li><a href="#" class="nav-link" id="adminMenu">Admin</a></li>
+                <li><a href="#" class="nav-link" onclick="logout()">Keluar</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <h1>Dashboard Admin</h1>
+            <p>Kelola semua booking dan data sistem</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3>Total Booking</h3>
+                <div style="font-size: 2rem; font-weight: bold; color: #2563eb;" id="totalBookings">0</div>
+                <p style="color: #64748b;">Semua booking</p>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>Booking Hari Ini</h3>
+                <div style="font-size: 2rem; font-weight: bold; color: #059669;" id="todayBookings">0</div>
+                <p style="color: #64748b;">Booking hari ini</p>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>Pending</h3>
+                <div style="font-size: 2rem; font-weight: bold; color: #d97706;" id="pendingBookings">0</div>
+                <p style="color: #64748b;">Menunggu konfirmasi</p>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>Revenue</h3>
+                <div style="font-size: 2rem; font-weight: bold; color: #dc2626;" id="totalRevenue">Rp 0</div>
+                <p style="color: #64748b;">Total pendapatan</p>
+            </div>
+        </div>
+
+        <!-- Booking Management -->
+        <div class="dashboard-card" style="margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3>Manajemen Booking</h3>
+                <div>
+                    <select id="statusFilter" style="padding: 8px; border: 1px solid #e5e7eb; border-radius: 4px; margin-right: 1rem;">
+                        <option value="">Semua Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <button onclick="refreshBookings()" class="btn" style="padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 4px;">Refresh</button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID Booking</th>
+                            <th>Nama</th>
+                            <th>Layanan</th>
+                            <th>Tanggal</th>
+                            <th>Waktu</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTable">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem;">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-card" style="margin-top: 2rem;">
+            <h3>Aksi Cepat</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <button onclick="exportBookings()" class="btn" style="padding: 12px; background: #059669; color: white; border: none; border-radius: 4px;">
+                    📊 Export Data
+                </button>
+                <button onclick="sendReminders()" class="btn" style="padding: 12px; background: #d97706; color: white; border: none; border-radius: 4px;">
+                    📧 Kirim Reminder
+                </button>
+                <button onclick="generateReport()" class="btn" style="padding: 12px; background: #7c3aed; color: white; border: none; border-radius: 4px;">
+                    📈 Generate Report
+                </button>
+                <button onclick="manageServices()" class="btn" style="padding: 12px; background: #dc2626; color: white; border: none; border-radius: 4px;">
+                    ⚙️ Kelola Layanan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for booking details -->
+    <div id="bookingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 10px; max-width: 500px; width: 90%;">
+            <h3 style="margin-bottom: 1rem;">Detail Booking</h3>
+            <div id="bookingDetails"></div>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                <button onclick="closeModal()" class="btn" style="padding: 8px 16px; background: #6b7280; color: white; border: none; border-radius: 4px;">Tutup</button>
+                <button onclick="confirmBooking()" class="btn" style="padding: 8px 16px; background: #059669; color: white; border: none; border-radius: 4px;">Konfirmasi</button>
+                <button onclick="cancelBooking()" class="btn" style="padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 4px;">Batalkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let currentBookingId = null;
+
+        // Check authentication
+        window.addEventListener('load', function() {
+            const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const user = JSON.parse(userData);
+            if (user.role !== 'admin') {
+                alert('Akses ditolak. Halaman ini hanya untuk admin.');
+                window.location.href = 'booking.html';
+                return;
+            }
+            
+            document.getElementById('adminMenu').textContent = user.name;
+            loadDashboardData();
+        });
+
+        function loadDashboardData() {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            
+            // Update statistics
+            document.getElementById('totalBookings').textContent = bookings.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayBookings = bookings.filter(b => b.date === today);
+            document.getElementById('todayBookings').textContent = todayBookings.length;
+            
+            const pendingBookings = bookings.filter(b => b.status === 'pending');
+            document.getElementById('pendingBookings').textContent = pendingBookings.length;
+            
+            const confirmedBookings = bookings.filter(b => b.status === 'confirmed');
+            const totalRevenue = confirmedBookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+            document.getElementById('totalRevenue').textContent = 'Rp ' + totalRevenue.toLocaleString('id-ID');
+            
+            // Load bookings table
+            loadBookingsTable();
+        }
+
+        function loadBookingsTable() {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            let filteredBookings = bookings;
+            if (statusFilter) {
+                filteredBookings = bookings.filter(b => b.status === statusFilter);
+            }
+            
+            const tbody = document.getElementById('bookingsTable');
+            
+            if (filteredBookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Tidak ada data booking</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filteredBookings.map(booking => `
+                <tr>
+                    <td>${booking.id}</td>
+                    <td>${booking.userName || 'N/A'}</td>
+                    <td>${getServiceName(booking.service)}</td>
+                    <td>${new Date(booking.date).toLocaleDateString('id-ID')}</td>
+                    <td>${booking.time}</td>
+                    <td><span class="status status-${booking.status}">${getStatusText(booking.status)}</span></td>
+                    <td>Rp ${(booking.totalPrice || 0).toLocaleString('id-ID')}</td>
+                    <td>
+                        <button onclick="viewBooking('${booking.id}')" style="padding: 4px 8px; background: #2563eb; color: white; border: none; border-radius: 3px; margin-right: 4px;">Detail</button>
+                        ${booking.status === 'pending' ? `<button onclick="quickConfirm('${booking.id}')" style="padding: 4px 8px; background: #059669; color: white; border: none; border-radius: 3px;">Konfirmasi</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getServiceName(service) {
+            const names = {
+                'konsultasi': 'Konsultasi Bisnis',
+                'meeting': 'Meeting Room',
+                'event': 'Event Planning',
+                'training': 'Training & Workshop',
+                'coworking': 'Coworking Space'
+            };
+            return names[service] || service;
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'pending': 'Menunggu',
+                'confirmed': 'Dikonfirmasi',
+                'cancelled': 'Dibatalkan'
+            };
+            return texts[status] || status;
+        }
+
+        function viewBooking(bookingId) {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const booking = bookings.find(b => b.id === bookingId);
+            
+            if (!booking) return;
+            
+            currentBookingId = bookingId;
+            
+            document.getElementById('bookingDetails').innerHTML = `
+                <div style="display: grid; gap: 1rem;">
+                    <div><strong>ID Booking:</strong> ${booking.id}</div>
+                    <div><strong>Nama:</strong> ${booking.userName}</div>
+                    <div><strong>Email:</strong> ${booking.userEmail}</div>
+                    <div><strong>Kontak:</strong> ${booking.contact}</div>
+                    <div><strong>Layanan:</strong> ${getServiceName(booking.service)}</div>
+                    <div><strong>Tanggal:</strong> ${new Date(booking.date).toLocaleDateString('id-ID')}</div>
+                    <div><strong>Waktu:</strong> ${booking.time}</div>
+                    <div><strong>Durasi:</strong> ${booking.duration} jam</div>
+                    <div><strong>Peserta:</strong> ${booking.participants} orang</div>
+                    <div><strong>Status:</strong> <span class="status status-${booking.status}">${getStatusText(booking.status)}</span></div>
+                    <div><strong>Total:</strong> Rp ${(booking.totalPrice || 0).toLocaleString('id-ID')}</div>
+                    ${booking.notes ? `<div><strong>Catatan:</strong> ${booking.notes}</div>` : ''}
+                    <div><strong>Dibuat:</strong> ${new Date(booking.createdAt).toLocaleString('id-ID')}</div>
+                </div>
+            `;
+            
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+            currentBookingId = null;
+        }
+
+        function confirmBooking() {
+            if (!currentBookingId) return;
+            
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const bookingIndex = bookings.findIndex(b => b.id === currentBookingId);
+            
+            if (bookingIndex !== -1) {
+                bookings[bookingIndex].status = 'confirmed';
+                bookings[bookingIndex].confirmedAt = new Date().toISOString();
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+                
+                alert('Booking berhasil dikonfirmasi!');
+                closeModal();
+                loadDashboardData();
+            }
+        }
+
+        function cancelBooking() {
+            if (!currentBookingId) return;
+            
+            if (confirm('Apakah Anda yakin ingin membatalkan booking ini?')) {
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                const bookingIndex = bookings.findIndex(b => b.id === currentBookingId);
+                
+                if (bookingIndex !== -1) {
+                    bookings[bookingIndex].status = 'cancelled';
+                    bookings[bookingIndex].cancelledAt = new Date().toISOString();
+                    localStorage.setItem('bookings', JSON.stringify(bookings));
+                    
+                    alert('Booking berhasil dibatalkan!');
+                    closeModal();
+                    loadDashboardData();
+                }
+            }
+        }
+
+        function quickConfirm(bookingId) {
+            if (confirm('Konfirmasi booking ini?')) {
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                const bookingIndex = bookings.findIndex(b => b.id === bookingId);
+                
+                if (bookingIndex !== -1) {
+                    bookings[bookingIndex].status = 'confirmed';
+                    bookings[bookingIndex].confirmedAt = new Date().toISOString();
+                    localStorage.setItem('bookings', JSON.stringify(bookings));
+                    
+                    loadDashboardData();
+                }
+            }
+        }
+
+        function refreshBookings() {
+            loadDashboardData();
+        }
+
+        // Status filter
+        document.getElementById('statusFilter').addEventListener('change', loadBookingsTable);
+
+        // Quick actions
+        function exportBookings() {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "ID,Nama,Email,Layanan,Tanggal,Waktu,Status,Total\n"
+                + bookings.map(b => 
+                    `${b.id},${b.userName},${b.userEmail},${getServiceName(b.service)},${b.date},${b.time},${getStatusText(b.status)},${b.totalPrice || 0}`
+                ).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "bookings_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function sendReminders() {
+            alert('Fitur pengiriman reminder akan segera tersedia!');
+        }
+
+        function generateReport() {
+            alert('Fitur generate report akan segera tersedia!');
+        }
+
+        function manageServices() {
+            alert('Fitur manajemen layanan akan segera tersedia!');
+        }
+
+        function logout() {
+            localStorage.removeItem('userData');
+            sessionStorage.removeItem('userData');
+            window.location.href = 'login.html';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('bookingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

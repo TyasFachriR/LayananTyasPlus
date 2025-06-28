@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontak - Layanan Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2><a href="index.html" style="text-decoration: none; color: inherit;">Layanan Pro</a></h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Beranda</a></li>
+                <li><a href="about.html" class="nav-link">Tentang</a></li>
+                <li><a href="services.html" class="nav-link">Layanan</a></li>
+                <li><a href="pricing.html" class="nav-link">Harga</a></li>
+                <li><a href="contact.html" class="nav-link">Kontak</a></li>
+                <li><a href="faq.html" class="nav-link">FAQ</a></li>
+                <li><a href="login.html" class="nav-link login-btn">Masuk</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main style="margin-top: 70px;">
+        <section style="padding: 80px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center;">
+            <div class="container">
+                <h1 style="font-size: 3rem; margin-bottom: 1rem;">Hubungi Kami</h1>
+                <p style="font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">Kami siap membantu Anda. Jangan ragu untuk menghubungi tim support kami</p>
+            </div>
+        </section>
+
+        <section style="padding: 80px 20px;">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 4rem;">
+                    <!-- Contact Form -->
+                    <div>
+                        <h2 style="font-size: 2rem; margin-bottom: 2rem; color: #1e293b;">Kirim Pesan</h2>
+                        
+                        <div id="contactAlert"></div>
+                        
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="name">Nama Lengkap</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">Nomor Telepon</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subject">Subjek</label>
+                                <select id="subject" name="subject" required>
+                                    <option value="">-- Pilih Subjek --</option>
+                                    <option value="general">Pertanyaan Umum</option>
+                                    <option value="support">Dukungan Teknis</option>
+                                    <option value="sales">Informasi Penjualan</option>
+                                    <option value="partnership">Kemitraan</option>
+                                    <option value="feedback">Feedback & Saran</option>
+                                    <option value="other">Lainnya</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Pesan</label>
+                                <textarea id="message" name="message" rows="5" required placeholder="Tuliskan pesan Anda di sini..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn-submit" id="contactBtn">
+                                Kirim Pesan
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div>
+                        <h2 style="font-size: 2rem; margin-bottom: 2rem; color: #1e293b;">Informasi Kontak</h2>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 2rem;">
+                            <div style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">📍</div>
+                                <div>
+                                    <h3 style="color: #1e293b; margin-bottom: 0.5rem;">Alamat</h3>
+                                    <p style="color: #64748b; line-height: 1.6;">
+                                        Jl. Raya Viktor<br>
+                                        Tangerang Selatan <br>
+                                        Indonesia
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">📞</div>
+                                <div>
+                                    <h3 style="color: #1e293b; margin-bottom: 0.5rem;">Telepon</h3>
+                                    <p style="color: #64748b; line-height: 1.6;">
+                                        <a href="tel:+622112345678" style="color: #2563eb; text-decoration: none;">(62) 88214315633 </a><br>
+                                        <a href="tel:+6281234567890" style="color: #2563eb; text-decoration: none;">+62 882-1431-5633</a>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">✉️</div>
+                                <div>
+                                    <h3 style="color: #1e293b; margin-bottom: 0.5rem;">Email</h3>
+                                    <p style="color: #64748b; line-height: 1.6;">
+                                        <a href="mailto:info@bookingpro.com" style="color: #2563eb; text-decoration: none;">rtyasfachri@gmail.com</a><br>
+                                        <a href="mailto:support@bookingpro.com" style="color: #2563eb; text-decoration: none;">rtyasfachri@gmail.com</a>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: start; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🕒</div>
+                                <div>
+                                    <h3 style="color: #1e293b; margin-bottom: 0.5rem;">Jam Operasional</h3>
+                                    <p style="color: #64748b; line-height: 1.6;">
+                                        Senin - Rabu: 09:00 - 16:00<br><br>
+                                        kamis- Minggu: Tutup
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Media -->
+                        <div style="margin-top: 3rem;">
+                            <h3 style="color: #1e293b; margin-bottom: 1rem;">Ikuti Kami</h3>
+                            <div style="display: flex; gap: 1rem;">
+                                <a href="facebook.com" style="width: 40px; height: 40px; background: #1877f2; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;">f</a>
+                                <a href="x.com" style="width: 40px; height: 40px; background: #1da1f2; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;">t</a>
+                                <a href="line.com" style="width: 40px; height: 40px; background: #0077b5; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;">in</a>
+                                <a href="instagram.com" style="width: 40px; height: 40px; background: #e4405f; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;">ig</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section style="padding: 80px 20px; background: #f8fafc;">
+            <div class="container">
+                <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #1e293b;">Lokasi Kami</h2>
+                <div style="background: #e5e7eb; height: auto; width: auto; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 1.2rem;">
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.3686724091854!2d106.68895767361956!3d-6.346282562086847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69e5a6e26dc3cd%3A0xccd6344b8021119d!2sUniversitas%20Pamulang%20Kampus%202%20(UNPAM%20Viktor)!5e0!3m2!1sid!2sid!4v1751049477736!5m2!1sid!2sid" width="1200" height="600" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <p style="color: #64748b; margin-bottom: 1rem;">Kantor kami berlokasi strategis di pusat kota Jakarta, mudah diakses dengan transportasi umum.</p>
+                    <a href="https://maps.app.goo.gl/zAXu5y9sER6vHcEz6" class="btn btn-primary" style="display: inline-block;">Lihat di Google Maps</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Quick Links -->
+        <section style="padding: 80px 20px;">
+            <div class="container">
+                <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #1e293b;">Pertanyaan Umum</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                    <div class="feature-card" style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">❓</div>
+                        <h3>Cara Booking</h3>
+                        <p style="color: #64748b; margin-bottom: 1.5rem;">Panduan lengkap cara melakukan booking</p>
+                        <a href="faq.html" class="btn btn-secondary">Lihat FAQ</a>
+                    </div>
+
+                    <div class="feature-card" style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">💳</div>
+                        <h3>Pembayaran</h3>
+                        <p style="color: #64748b; margin-bottom: 1.5rem;">Informasi metode dan proses pembayaran</p>
+                        <a href="pricing.html" class="btn btn-secondary">Lihat Harga</a>
+                    </div>
+
+                    <div class="feature-card" style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">🔧</div>
+                        <h3>Dukungan Teknis</h3>
+                        <p style="color: #64748b; margin-bottom: 1.5rem;">Bantuan untuk masalah teknis</p>
+                        <a href="mailto:support@bookingpro.com" class="btn btn-secondary">Email Support</a>
+                    </div>
+
+                    <div class="feature-card" style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">📋</div>
+                        <h3>Lacak Booking</h3>
+                        <p style="color: #64748b; margin-bottom: 1.5rem;">Cek status booking Anda</p>
+                        <a href="tracking.html" class="btn btn-secondary">Lacak Sekarang</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+<footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Layanan Pro</h3>
+                    <p>Solusi booking online terpercaya untuk bisnis Anda.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Menu</h4>
+                    <ul>
+                        <li><a href="services.html">Layanan</a></li>
+                        <li><a href="pricing.html">Harga</a></li>
+                        <li><a href="about.html">Tentang</a></li>
+                        <li><a href="contact.html">Kontak</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Bantuan</h4>
+                    <ul>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="tracking.html">Lacak Booking</a></li>
+                        <li><a href="contact.html">Dukungan</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Kontak</h4>
+                    <p>Email: rtyasfachri@gmail.com</p>
+                    <p>Telepon: (088214315633)</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 layanan Pro/Tyas Fachri R Semua hak dilindungi.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const contactData = Object.fromEntries(formData.entries());
+            const contactBtn = document.getElementById('contactBtn');
+            const alertDiv = document.getElementById('contactAlert');
+            
+            // Show loading
+            contactBtn.innerHTML = '<span class="loading"></span> Mengirim...';
+            contactBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Save contact message
+                const messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+                const newMessage = {
+                    id: Date.now(),
+                    ...contactData,
+                    timestamp: new Date().toISOString(),
+                    status: 'new'
+                };
+                
+                messages.push(newMessage);
+                localStorage.setItem('contactMessages', JSON.stringify(messages));
+                
+                alertDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Pesan berhasil dikirim!</strong><br>
+                        Terima kasih atas pesan Anda. Tim kami akan menghubungi Anda dalam 1x24 jam.
+                    </div>
+                `;
+                
+                // Reset form
+                this.reset();
+                
+                contactBtn.innerHTML = 'Kirim Pesan';
+                contactBtn.disabled = false;
+                
+                // Scroll to alert
+                alertDiv.scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

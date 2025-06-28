@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking - BookingPro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2><a href="index.html" style="text-decoration: none; color: inherit;">BookingPro</a></h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Beranda</a></li>
+                <li><a href="services.html" class="nav-link">Layanan</a></li>
+                <li><a href="pricing.html" class="nav-link">Harga</a></li>
+                <li><a href="tracking.html" class="nav-link">Lacak Booking</a></li>
+                <li><a href="#" class="nav-link" id="userMenu">Akun</a></li>
+                <li><a href="#" class="nav-link" onclick="logout()">Keluar</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <h1>Buat Booking Baru</h1>
+            <p>Isi formulir di bawah untuk membuat reservasi</p>
+        </div>
+
+        <div class="form-container" style="margin: 0; max-width: 800px;">
+            <div id="bookingAlert"></div>
+            
+            <form id="bookingForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label for="service">Pilih Layanan</label>
+                        <select id="service" name="service" required>
+                            <option value="">-- Pilih Layanan --</option>
+                            <option value="konsultasi">Konsultasi Bisnis</option>
+                            <option value="meeting">Meeting Room</option>
+                            <option value="event">Event Planning</option>
+                            <option value="training">Training & Workshop</option>
+                            <option value="coworking">Coworking Space</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">Tanggal</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label for="time">Waktu Mulai</label>
+                        <select id="time" name="time" required>
+                            <option value="">-- Pilih Waktu --</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="13:00">13:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="duration">Durasi (jam)</label>
+                        <select id="duration" name="duration" required>
+                            <option value="">-- Pilih Durasi --</option>
+                            <option value="1">1 Jam</option>
+                            <option value="2">2 Jam</option>
+                            <option value="3">3 Jam</option>
+                            <option value="4">4 Jam</option>
+                            <option value="8">Full Day (8 Jam)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="participants">Jumlah Peserta</label>
+                        <input type="number" id="participants" name="participants" min="1" max="50" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Catatan Tambahan</label>
+                    <textarea id="notes" name="notes" placeholder="Masukkan catatan atau permintaan khusus..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact">Nomor Kontak</label>
+                    <input type="tel" id="contact" name="contact" required placeholder="Contoh: 08123456789">
+                </div>
+                
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                    <h3 style="margin-bottom: 1rem; color: #1e293b;">Ringkasan Booking</h3>
+                    <div id="bookingSummary">
+                        <p>Silakan lengkapi formulir untuk melihat ringkasan booking</p>
+                    </div>
+                    <div id="totalPrice" style="font-size: 1.2rem; font-weight: bold; color: #2563eb; margin-top: 1rem;"></div>
+                </div>
+                
+                <button type="submit" class="btn-submit" id="bookingBtn">
+                    Buat Booking
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Check authentication
+        window.addEventListener('load', function() {
+            const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const user = JSON.parse(userData);
+            document.getElementById('userMenu').textContent = user.name;
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').min = today;
+        });
+
+        // Service pricing
+        const servicePrices = {
+            'konsultasi': 150000,
+            'meeting': 200000,
+            'event': 500000,
+            'training': 300000,
+            'coworking': 100000
+        };
+
+        // Update booking summary
+        function updateBookingSummary() {
+            const service = document.getElementById('service').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const duration = document.getElementById('duration').value;
+            const participants = document.getElementById('participants').value;
+            
+            const summaryDiv = document.getElementById('bookingSummary');
+            const totalPriceDiv = document.getElementById('totalPrice');
+            
+            if (service && date && time && duration && participants) {
+                const serviceNames = {
+                    'konsultasi': 'Konsultasi Bisnis',
+                    'meeting': 'Meeting Room',
+                    'event': 'Event Planning',
+                    'training': 'Training & Workshop',
+                    'coworking': 'Coworking Space'
+                };
+                
+                const basePrice = servicePrices[service];
+                const totalPrice = basePrice * parseInt(duration);
+                
+                summaryDiv.innerHTML = `
+                    <div style="display: grid; gap: 0.5rem;">
+                        <div><strong>Layanan:</strong> ${serviceNames[service]}</div>
+                        <div><strong>Tanggal:</strong> ${new Date(date).toLocaleDateString('id-ID')}</div>
+                        <div><strong>Waktu:</strong> ${time} - ${calculateEndTime(time, duration)}</div>
+                        <div><strong>Durasi:</strong> ${duration} jam</div>
+                        <div><strong>Peserta:</strong> ${participants} orang</div>
+                    </div>
+                `;
+                
+                totalPriceDiv.innerHTML = `Total: Rp ${totalPrice.toLocaleString('id-ID')}`;
+            } else {
+                summaryDiv.innerHTML = '<p>Silakan lengkapi formulir untuk melihat ringkasan booking</p>';
+                totalPriceDiv.innerHTML = '';
+            }
+        }
+
+        function calculateEndTime(startTime, duration) {
+            const [hours, minutes] = startTime.split(':').map(Number);
+            const endHours = hours + parseInt(duration);
+            return `${endHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        // Add event listeners for real-time updates
+        ['service', 'date', 'time', 'duration', 'participants'].forEach(id => {
+            document.getElementById(id).addEventListener('change', updateBookingSummary);
+        });
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const bookingData = Object.fromEntries(formData.entries());
+            const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData'));
+            
+            const bookingBtn = document.getElementById('bookingBtn');
+            const alertDiv = document.getElementById('bookingAlert');
+            
+            // Show loading
+            bookingBtn.innerHTML = '<span class="loading"></span> Memproses Booking...';
+            bookingBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Generate booking ID
+                const bookingId = 'BK' + Date.now().toString().slice(-8);
+                
+                const booking = {
+                    id: bookingId,
+                    ...bookingData,
+                    userEmail: userData.email,
+                    userName: userData.name,
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                    totalPrice: servicePrices[bookingData.service] * parseInt(bookingData.duration)
+                };
+                
+                // Save booking
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                bookings.push(booking);
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+                
+                alertDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Booking berhasil dibuat!</strong><br>
+                        ID Booking: <strong>${bookingId}</strong><br>
+                        Status: Menunggu konfirmasi<br>
+                        <a href="tracking.html" style="color: #2563eb;">Lacak booking Anda di sini</a>
+                    </div>
+                `;
+                
+                // Reset form
+                this.reset();
+                updateBookingSummary();
+                
+                bookingBtn.innerHTML = 'Buat Booking';
+                bookingBtn.disabled = false;
+                
+                // Scroll to alert
+                alertDiv.scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        });
+
+        function logout() {
+            localStorage.removeItem('userData');
+            sessionStorage.removeItem('userData');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

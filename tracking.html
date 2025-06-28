@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lacak Booking - Layanan Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2><a href="index.html" style="text-decoration: none; color: inherit;">Layanan Pro</a></h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Beranda</a></li>
+                <li><a href="services.html" class="nav-link">Layanan</a></li>
+                <li><a href="pricing.html" class="nav-link">Harga</a></li>
+                <li><a href="tracking.html" class="nav-link active">Lacak Booking</a></li>
+                <li><a href="contact.html" class="nav-link">Kontak</a></li>
+                <li><a href="login.html" class="nav-link">Masuk</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard" style="text-align: center;">
+        <div class="dashboard-header">
+            <h1>Lacak Booking Anda</h1>
+            <p>Masukkan ID booking untuk melihat status dan detail</p>
+        </div>
+
+        <div class="form-container" style="margin: 0; text-align: center; max-width: 600px;">
+            <div class="form-group">
+                <label for="bookingId">ID Booking</label>
+                <input type="text" id="bookingId" name="bookingId" placeholder="Contoh: BK12345678" required>
+            </div>
+            
+            <button type="button" onclick="trackBooking()" class="btn-submit" id="trackBtn">
+                Lacak Booking
+            </button>
+        </div>
+
+        <div id="trackingResult" style="display: none; max-width: 800px; margin: 2rem auto;">
+            <div class="dashboard-card">
+                <h3>Detail Booking</h3>
+                <div id="bookingInfo"></div>
+            </div>
+            
+            <div class="dashboard-card" style="margin-top: 1rem;">
+                <h3>Status Timeline</h3>
+                <div id="statusTimeline"></div>
+            </div>
+        </div>
+
+        <div id="trackingAlert"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function trackBooking() {
+            const bookingId = document.getElementById('bookingId').value.trim();
+            const trackBtn = document.getElementById('trackBtn');
+            const alertDiv = document.getElementById('trackingAlert');
+            const resultDiv = document.getElementById('trackingResult');
+            
+            if (!bookingId) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Silakan masukkan ID booking!</div>';
+                return;
+            }
+            
+            // Show loading
+            trackBtn.innerHTML = '<span class="loading"></span> Mencari...';
+            trackBtn.disabled = true;
+            
+            setTimeout(() => {
+                const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                const booking = bookings.find(b => b.id.toLowerCase() === bookingId.toLowerCase());
+                
+                if (booking) {
+                    displayBookingInfo(booking);
+                    resultDiv.style.display = 'block';
+                    alertDiv.innerHTML = '';
+                } else {
+                    alertDiv.innerHTML = '<div class="alert alert-error">Booking tidak ditemukan! Periksa kembali ID booking Anda.</div>';
+                    resultDiv.style.display = 'none';
+                }
+                
+                trackBtn.innerHTML = 'Lacak Booking';
+                trackBtn.disabled = false;
+            }, 1000);
+        }
+
+        function displayBookingInfo(booking) {
+            const serviceNames = {
+                'konsultasi': 'Konsultasi Bisnis',
+                'meeting': 'Meeting Room',
+                'event': 'Event Planning',
+                'training': 'Training & Workshop',
+                'coworking': 'Coworking Space'
+            };
+
+            document.getElementById('bookingInfo').innerHTML = `
+                <div style="display: grid; gap: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>ID Booking:</strong><br>${booking.id}</div>
+                        <div><strong>Status:</strong><br><span class="status status-${booking.status}">${getStatusText(booking.status)}</span></div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>Layanan:</strong><br>${serviceNames[booking.service] || booking.service}</div>
+                        <div><strong>Tanggal:</strong><br>${new Date(booking.date).toLocaleDateString('id-ID')}</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>Waktu:</strong><br>${booking.time}</div>
+                        <div><strong>Durasi:</strong><br>${booking.duration} jam</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>Peserta:</strong><br>${booking.participants} orang</div>
+                        <div><strong>Total:</strong><br>Rp ${(booking.totalPrice || 0).toLocaleString('id-ID')}</div>
+                    </div>
+                    ${
+                      booking.notes
+                        ? '<div><strong>Catatan:</strong><br>' +
+                          booking.notes +
+                          '</div>'
+                        : ''
+                    }
+                    <div><strong>Kontak:</strong><br>${booking.contact}</div>
+                </div>
+            `;
+
+            displayStatusTimeline(booking);
+        }
+
+        function displayStatusTimeline(booking) {
+            const timeline = [];
+            
+            // Created
+            timeline.push({
+                status: 'Booking Dibuat',
+                date: booking.createdAt,
+                icon: '📝',
+                completed: true
+            });
+            
+            // Confirmed or Cancelled
+            if (booking.status === 'confirmed') {
+                timeline.push({
+                    status: 'Booking Dikonfirmasi',
+                    date: booking.confirmedAt,
+                    icon: '✅',
+                    completed: true
+                });
+                
+                // Check if booking date is today or future
+                const bookingDate = new Date(booking.date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (bookingDate >= today) {
+                    timeline.push({
+                        status: 'Menunggu Jadwal',
+                        date: null,
+                        icon: '⏳',
+                        completed: false
+                    });
+                } else {
+                    timeline.push({
+                        status: 'Selesai',
+                        date: null,
+                        icon: '🎉',
+                        completed: true
+                    });
+                }
+            } else if (booking.status === 'cancelled') {
+                timeline.push({
+                    status: 'Booking Dibatalkan',
+                    date: booking.cancelledAt,
+                    icon: '❌',
+                    completed: true
+                });
+            } else {
+                timeline.push({
+                    status: 'Menunggu Konfirmasi',
+                    date: null,
+                    icon: '⏳',
+                    completed: false
+                });
+            }
+
+            const timelineHtml = timeline.map((item, index) => `
+                <div style="display: flex; align-items: center; margin-bottom: 1rem; ${item.completed ? 'opacity: 1' : 'opacity: 0.6'}">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: ${item.completed ? '#059669' : '#e5e7eb'}; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                        ${item.icon}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: ${item.completed ? '#1e293b' : '#64748b'};">${item.status}</div>
+                        ${item.date ? `<div style="font-size: 0.875rem; color: #64748b;">${new Date(item.date).toLocaleString('id-ID')}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('statusTimeline').innerHTML = timelineHtml;
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'pending': 'Menunggu Konfirmasi',
+                'confirmed': 'Dikonfirmasi',
+                'cancelled': 'Dibatalkan'
+            };
+            return texts[status] || status;
+        }
+
+        // Allow Enter key to trigger search
+        document.getElementById('bookingId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                trackBooking();
+            }
+        });
+    </script>
+</body>
+</html>

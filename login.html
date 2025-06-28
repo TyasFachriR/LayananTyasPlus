@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - BookingPro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2><a href="index.html" style="text-decoration: none; color: inherit;">BookingPro</a></h2>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: #1e293b;">Masuk ke Akun Anda</h2>
+        
+        <div id="loginAlert"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" id="remember" name="remember">
+                    Ingat saya
+                </label>
+            </div>
+            
+            <button type="submit" class="btn-submit" id="loginBtn">
+                Masuk
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <p>Belum punya akun? <a href="#" onclick="showRegisterForm()" style="color: #2563eb; text-decoration: none;">Daftar di sini</a></p>
+            <p><a href="#" onclick="showForgotPassword()" style="color: #64748b; text-decoration: none;">Lupa password?</a></p>
+        </div>
+    </div>
+
+    <!-- Register Form (Hidden by default) -->
+    <div class="form-container" id="registerContainer" style="display: none;">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: #1e293b;">Daftar Akun Baru</h2>
+        
+        <div id="registerAlert"></div>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="regName">Nama Lengkap</label>
+                <input type="text" id="regName" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="regEmail">Email</label>
+                <input type="email" id="regEmail" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="regPhone">Nomor Telepon</label>
+                <input type="tel" id="regPhone" name="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="regPassword">Password</label>
+                <input type="password" id="regPassword" name="password" required minlength="6">
+            </div>
+            
+            <div class="form-group">
+                <label for="regConfirmPassword">Konfirmasi Password</label>
+                <input type="password" id="regConfirmPassword" name="confirmPassword" required>
+            </div>
+            
+            <button type="submit" class="btn-submit" id="registerBtn">
+                Daftar
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <p>Sudah punya akun? <a href="#" onclick="showLoginForm()" style="color: #2563eb; text-decoration: none;">Masuk di sini</a></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Login/Register Form Toggle
+        function showRegisterForm() {
+            document.querySelector('.form-container:first-of-type').style.display = 'none';
+            document.getElementById('registerContainer').style.display = 'block';
+        }
+
+        function showLoginForm() {
+            document.querySelector('.form-container:first-of-type').style.display = 'block';
+            document.getElementById('registerContainer').style.display = 'none';
+        }
+
+        function showForgotPassword() {
+            alert('Fitur lupa password belum segera tersedia. maaf bu ');
+        }
+
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            const loginBtn = document.getElementById('loginBtn');
+            const alertDiv = document.getElementById('loginAlert');
+            
+            // Show loading
+            loginBtn.innerHTML = '<span class="loading"></span> Memproses...';
+            loginBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Demo credentials
+                if (email === 'admintyas@gmail.com' && password === 'admin') {
+                    // Store user session
+                    const userData = {
+                        email: email,
+                        name: 'Administrator',
+                        role: 'admin',
+                        loginTime: new Date().toISOString()
+                    };
+                    
+                    if (remember) {
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                    } else {
+                        sessionStorage.setItem('userData', JSON.stringify(userData));
+                    }
+                    
+                    alertDiv.innerHTML = '<div class="alert alert-success">Login berhasil! Mengalihkan ke dashboard...</div>';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } else if (email === 'usertyas@gmail.com' && password === 'user') {
+                    const userData = {
+                        email: email,
+                        name: 'User Demo',
+                        role: 'user',
+                        loginTime: new Date().toISOString()
+                    };
+                    
+                    if (remember) {
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                    } else {
+                        sessionStorage.setItem('userData', JSON.stringify(userData));
+                    }
+                    
+                    alertDiv.innerHTML = '<div class="alert alert-success">Login berhasil! Mengalihkan ke halaman booking...</div>';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'booking.html';
+                    }, 1500);
+                } else {
+                    alertDiv.innerHTML = '<div class="alert alert-error">Email atau password salah!</div>';
+                }
+                
+                loginBtn.innerHTML = 'Masuk';
+                loginBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Register Form Handler
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const registerBtn = document.getElementById('registerBtn');
+            const alertDiv = document.getElementById('registerAlert');
+            
+            // Validation
+            if (password !== confirmPassword) {
+                alertDiv.innerHTML = '<div class="alert alert-error">Password dan konfirmasi password tidak cocok!</div>';
+                return;
+            }
+            
+            // Show loading
+            registerBtn.innerHTML = '<span class="loading"></span> Mendaftar...';
+            registerBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Check if email already exists (demo)
+                const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                
+                if (existingUsers.find(user => user.email === email)) {
+                    alertDiv.innerHTML = '<div class="alert alert-error">Email sudah terdaftar!</div>';
+                } else {
+                    // Add new user
+                    const newUser = {
+                        id: Date.now(),
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        password: password, // In real app, this should be hashed
+                        role: 'user',
+                        registeredAt: new Date().toISOString()
+                    };
+                    
+                    existingUsers.push(newUser);
+                    localStorage.setItem('registeredUsers', JSON.stringify(existingUsers));
+                    
+                    alertDiv.innerHTML = '<div class="alert alert-success">Pendaftaran berhasil! Silakan login dengan akun baru Anda.</div>';
+                    
+                    setTimeout(() => {
+                        showLoginForm();
+                        document.getElementById('email').value = email;
+                    }, 2000);
+                }
+                
+                registerBtn.innerHTML = 'Daftar';
+                registerBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Check if user is already logged in
+        window.addEventListener('load', function() {
+            const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
+            if (userData) {
+                const user = JSON.parse(userData);
+                if (user.role === 'admin') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    window.location.href = 'booking.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
